@@ -53,49 +53,70 @@ If **What**, **Goal**, or **Channel** are missing, ask before proceeding. Everyt
 
 ## Pipeline
 
-Run these phases for every request. Phases 1-2 can run in parallel. Phase 3 depends on Phase 2. Phase 4 assembles. Phase 5 judges.
+Run ALL phases for every request. Do not skip phases. Do not deliver an email without images. Do not deliver a text-only email and call it done.
 
 ### Phase 1 — Story & Copy
 
 1. Define the narrative: what emotional lever, what single insight, what action.
 2. Write all copy variants needed for the channel(s) using proven-voice.
-3. For emails: follow proven-email for structure, segmentation, flow logic, subject line + preheader + alternatives.
+3. For emails: follow proven-email for structure, segmentation, flow logic, subject line + preheader + 2 alternatives.
 4. For social: write 3 copy variations per platform — different hooks, same core message. Respect platform character limits (see channel-specs.md).
 5. For paid: write headline/description variations within character limits.
 6. For multi-channel: write the master narrative once, then adapt per channel. One story, many shapes.
+7. **Copy must be short and scannable.** Bite-sized content. No paragraphs longer than 2 sentences. If a section needs more, split it into two modular blocks.
 
 ### Phase 2 — Image Direction
 
-1. Based on the story, determine which proven-creative photography categories are needed.
-2. Generate 2 structured prompts per image slot using the full pipeline: band → binding rules → planner → validator.
-3. Specify aspect ratio per channel (see channel-specs.md) and intended placement (hero, inline, background).
-4. Never send unstructured prompts to Gemini. Always run through proven-creative first.
+**This phase is NOT optional for email.** Every subscriber/cart/win-back email must have at least one product image. Do not skip this phase.
+
+1. Read `proven-email`'s Image Direction section to determine the correct creative category and band for this email context. Default: CHROME band, white background.
+2. Read `proven-email`'s Visual Patterns section. Email images must be: bright, white background, product clearly lit, chrome luminous silver. Never dark, moody, atmospheric, or model-led.
+3. Generate 2 structured prompts per image slot using proven-creative: band → binding rules → planner → validator.
+4. Front-load the Gemini prompt with: `"Pure white background, bright even lighting, product chrome is luminous silver, immediately identifiable"`
+5. Never send unstructured prompts to Gemini. Always run through proven-creative first.
 
 ### Phase 3 — Image Generation
 
-1. **Load product reference images.** Check `products/README.md` for the product map. Load the `hero.png` (and `angle.png` if needed) from the matching product directory. Pass these to Gemini as reference images with every product-containing prompt. Instruct Gemini: "Use this reference image for exact product form, chrome finish, label placement, and proportions. Do not alter the bottle design."
+**This phase is NOT optional.** If Gemini is available, generate images. Do not skip to assembly without images.
+
+1. **Load product reference images.** Check `products/README.md` for the product map. Load `hero.png` (or `hero.jpg`) from the matching product directory. Pass to Gemini as reference with every product-containing prompt. Instruct: "Use this reference image for exact product form, chrome finish, label placement, and proportions. Do not alter the bottle design."
 2. Fire validated prompts to Gemini via the MCP connector, with reference images attached.
 3. Generate 2-3 options per image slot.
-4. If an image has quality issues, follow the error-recovery.md protocol: check against binding rules, retry with strengthened language, give up after 2 attempts.
-5. If Gemini is unavailable, proceed with prompt descriptions as placeholders.
+4. If quality issues, follow error-recovery.md: check binding rules, retry with strengthened language, give up after 2 attempts.
+5. If Gemini is completely unavailable (not connected, API error), THEN and only then proceed with the reference product image (`hero.png`) used directly. Never deliver a text-only email.
 
 ### Phase 4 — Assembly
 
-1. Build the final output:
-   - **Email:** Follow proven-email for structure (prospect vs. subscriber architecture, single CTA, exclusion logic, word count limits). Build HTML using Klaviyo constraints from proven-email: 600px max width, table-based layout, inline styles, bulletproof CTA pattern, font fallbacks. Apply color palette from proven-email (ember CTA, linen sections, navy dark sections). Add Klaviyo personalization tokens. Check: prospect emails ≤150 words, CTA above fold on mobile. Subscriber emails ≤400 words. Run campaign build checklist from proven-email before presenting.
-   - **Landing page:** Responsive HTML via proven-ui. Hero, sections, CTA. Full design token system.
-   - **Social:** Copy deck + images at correct aspect ratios. No HTML needed.
-   - **Paid:** Copy variations + image variations. Organized as a creative pack.
-2. Composite images into layout where applicable.
-3. Apply all PROVEN design tokens — Albert Sans, Source Serif 4, brand palette, glass effects.
-4. For emails: Klaviyo personalization tokens in place. For web: responsive breakpoints.
+Build the email as a **modular, scannable layout with product imagery**. Not a text document with a button.
+
+**Every subscriber email must contain:**
+- [ ] Product image — hero position, clean white background, product immediately recognizable
+- [ ] Bold headline — large, high-weight, the visual anchor of the email
+- [ ] Pricing or value — crossed-out price, per-month, savings amount, or promo code with value stated
+- [ ] Short scannable copy — 1-2 sentences per section, no dense paragraphs
+- [ ] Modular sections — each block has one focal point and one job
+- [ ] One CTA per section — ownership language ("GET MY FORMULA →"), ember pill button
+- [ ] Seasonal or timely hook in the copy — why now
+- [ ] Bright layout — white/linen backgrounds only, no dark hero sections
+
+**Build the HTML using:**
+- Klaviyo constraints from `proven-email/references/email-build.md`: 600px max width, table-based layout, inline styles, bulletproof CTA pattern, font fallbacks
+- Color palette from proven-ui tokens (referenced through email-build.md)
+- Klaviyo personalization tokens where appropriate
+- Run campaign build checklist from proven-email before presenting
+
+**For other channels:**
+- **Landing page:** Responsive HTML via proven-ui. Hero, sections, CTA. Full design token system.
+- **Social:** Copy deck + images at correct aspect ratios. No HTML needed.
+- **Paid:** Copy variations + image variations. Organized as a creative pack.
 
 ### Phase 5 — Brand QA
 
 1. Run proven-brand-qa on the assembled output.
 2. Score on three axes: Customer, Goal, Brand.
-3. If any axis below 7/10: flag the specific issue, suggest a fix, but still present the result.
-4. Never skip QA. If context is too full, note "QA skipped — run in follow-up session."
+3. **Also check against proven-email's Visual Patterns section:** Does this email look like the high-performers (product on white, big headline, pricing visible, modular layout)? Or does it look like the low-performers (text-heavy, no product image, dark/moody, model-led)?
+4. If any axis below 7/10 or if the email fails the visual patterns check: flag the specific issue, suggest a fix, but still present the result.
+5. Never skip QA.
 
 ---
 
