@@ -1,6 +1,6 @@
 # PROVEN Skincare Plugin
 
-Two agents, five skills, one brand system. Install once, everyone gets it.
+Org-level plugin for PROVEN. Two agents, five skills, one brand system. Install once, everyone gets it.
 
 ## Architecture
 
